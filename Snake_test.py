@@ -8,6 +8,9 @@ class MyTestCase(unittest.TestCase):
         words = Snake.read_file('tests/test_list.txt')
         self.assertEqual(1, len(words))
 
+class MyTestCase(unittest.TestCase):
+    def test_user_input(self):
+
 
 
 
