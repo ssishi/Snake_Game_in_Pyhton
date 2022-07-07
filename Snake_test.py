@@ -10,6 +10,7 @@ class MyTestCase(unittest.TestCase):
 
 class MyTestCase(unittest.TestCase):
     def test_user_input(self):
+        delay = delay
 
 
 
