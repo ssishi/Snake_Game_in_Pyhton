@@ -51,17 +51,17 @@ def group():
     if head.direction != "down":
         head.direction = "up"
  
- 
+ #Direction Down
 def godown():
     if head.direction != "up":
         head.direction = "down"
  
- 
+ #Direction Left
 def goleft():
     if head.direction != "right":
         head.direction = "left"
  
- 
+ #Direction Right
 def goright():
     if head.direction != "left":
         head.direction = "right"
