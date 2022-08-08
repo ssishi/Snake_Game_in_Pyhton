@@ -1,160 +1,131 @@
+
 import turtle
-import time
 import random
  
-delay = 0.1
-score = 0
-high_score = 0
+w = 500
+h = 500
+food_size = 10
+delay = 100
+ 
+offsets = {
+    "up": (0, 20),
+    "down": (0, -20),
+    "left": (-20, 0),
+    "right": (20, 0)
+}
+ 
+def reset():
+    global snake, snake_dir, food_position, pen
+    snake = [[0, 0], [0, 20], [0, 40], [0, 60], [0, 80]]
+    snake_dir = "up"
+    food_position = get_random_food_position()
+    food.goto(food_position)
+    move_snake()
+     
+def move_snake():
+    global snake_dir
+ 
+    new_head = snake[-1].copy()
+    new_head[0] = snake[-1][0] + offsets[snake_dir][0]
+    new_head[1] = snake[-1][1] + offsets[snake_dir][1]
+ 
+     
+    if new_head in snake[:-1]:
+        reset()
+    else:
+        snake.append(new_head)
+ 
+     
+        if not food_collision():
+            snake.pop(0)
  
  
- 
-# Creating a window screen
-wn = turtle.Screen()
-wn.title("Snake Game")
-wn.bgcolor("blue")
-# the width and height can be put as user's choice
-wn.setup(width=600, height=600)
-wn.tracer(0)
- 
-# head of the snake
-head = turtle.Turtle()
-head.shape("square")
-head.color("white")
-head.penup()
-head.goto(0, 0)
-head.direction = "Stop"
- 
-# food in the game
-food = turtle.Turtle()
-colors = random.choice(['red', 'green', 'black'])
-shapes = random.choice(['square', 'triangle', 'circle'])
-food.speed(0)
-food.shape(shapes)
-food.color(colors)
-food.penup()
-food.goto(0, 100)
- 
-pen = turtle.Turtle()
-pen.speed(0)
-pen.shape("square")
-pen.color("white")
-pen.penup()
-pen.hideturtle()
-pen.goto(0, 250)
-pen.write("Score : 0  High Score : 0", align="center",
-          font=("candara", 24, "bold"))
+        if snake[-1][0] > w / 2:
+            snake[-1][0] -= w
+        elif snake[-1][0] < - w / 2:
+            snake[-1][0] += w
+        elif snake[-1][1] > h / 2:
+            snake[-1][1] -= h
+        elif snake[-1][1] < -h / 2:
+            snake[-1][1] += h
  
  
- 
-# assigning key directions
-def group():
-    if head.direction != "down":
-        head.direction = "up"
- 
- #Direction Down
-def godown():
-    if head.direction != "up":
-        head.direction = "down"
- 
- #Direction Left
-def goleft():
-    if head.direction != "right":
-        head.direction = "left"
- 
- #Direction Right
-def goright():
-    if head.direction != "left":
-        head.direction = "right"
- 
- 
-def move():
-    if head.direction == "up":
-        y = head.ycor()
-        head.sety(y+20)
-    if head.direction == "down":
-        y = head.ycor()
-        head.sety(y-20)
-    if head.direction == "left":
-        x = head.xcor()
-        head.setx(x-20)
-    if head.direction == "right":
-        x = head.xcor()
-        head.setx(x+20)
- 
+        pen.clearstamps()
  
          
-wn.listen()
-wn.onkeypress(group, "w")
-wn.onkeypress(godown, "s")
-wn.onkeypress(goleft, "a")
-wn.onkeypress(goright, "d")
+        for segment in snake:
+            pen.goto(segment[0], segment[1])
+            pen.stamp()
  
-segments = []
+         
+        screen.update()
+ 
+        turtle.ontimer(move_snake, delay)
+ 
+def food_collision():
+    global food_position
+    if get_distance(snake[-1], food_position) < 20:
+        food_position = get_random_food_position()
+        food.goto(food_position)
+        return True
+    return False
+ 
+def get_random_food_position():
+    x = random.randint(- w / 2 + food_size, w / 2 - food_size)
+    y = random.randint(- h / 2 + food_size, h / 2 - food_size)
+    return (x, y)
+ 
+def get_distance(pos1, pos2):
+    x1, y1 = pos1
+    x2, y2 = pos2
+    distance = ((y2 - y1) ** 2 + (x2 - x1) ** 2) ** 0.5
+    return distance
+def go_up():
+    global snake_dir
+    if snake_dir != "down":
+        snake_dir = "up"
+ 
+def go_right():
+    global snake_dir
+    if snake_dir != "left":
+        snake_dir = "right"
+ 
+def go_down():
+    global snake_dir
+    if snake_dir!= "up":
+        snake_dir = "down"
+ 
+def go_left():
+    global snake_dir
+    if snake_dir != "right":
+        snake_dir = "left"
  
  
+screen = turtle.Screen()
+screen.setup(w, h)
+screen.title("Snake")
+screen.bgcolor("blue")
+screen.setup(500, 500)
+screen.tracer(0)
+         
  
-# Main Gameplay
-while True:
-    wn.update()
-    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
-        time.sleep(1)
-        head.goto(0, 0)
-        head.direction = "Stop"
-        colors = random.choice(['red', 'blue', 'green'])
-        shapes = random.choice(['square', 'circle'])
-        for segment in segments:
-            segment.goto(1000, 1000)
-        segments.clear()
-        score = 0
-        delay = 0.1
-        pen.clear()
-        pen.write("Score : {} High Score : {} ".format(
-            score, high_score), align="center", font=("candara", 24, "bold"))
-    if head.distance(food) < 20:
-        x = random.randint(-270, 270)
-        y = random.randint(-270, 270)
-        food.goto(x, y)
+pen = turtle.Turtle("square")
+pen.penup()
  
-        # Adding segment
-        new_segment = turtle.Turtle()
-        new_segment.speed(0)
-        new_segment.shape("square")
-        new_segment.color("orange")  # tail colour
-        new_segment.penup()
-        segments.append(new_segment)
-        delay -= 0.001
-        score += 10
-        if score > high_score:
-            high_score = score
-        pen.clear()
-        pen.write("Score : {} High Score : {} ".format(
-            score, high_score), align="center", font=("candara", 24, "bold"))
-    # Checking for head collisions with body segments
-    for index in range(len(segments)-1, 0, -1):
-        x = segments[index-1].xcor()
-        y = segments[index-1].ycor()
-        segments[index].goto(x, y)
-    if len(segments) > 0:
-        x = head.xcor()
-        y = head.ycor()
-        segments[0].goto(x, y)
-    move()
-    for segment in segments:
-        if segment.distance(head) < 20:
-            time.sleep(1)
-            head.goto(0, 0)
-            head.direction = "stop"
-            colors = random.choice(['red', 'blue', 'green'])
-            shapes = random.choice(['square', 'circle'])
-            for segment in segments:
-                segment.goto(1000, 1000)
-            segment.clear()
  
-            score = 0
-            delay = 0.1
-            pen.clear()
-            pen.write("Score : {} High Score : {} ".format(
-                score, high_score), align="center", font=("candara", 24, "bold"))
-    time.sleep(delay)
+food = turtle.Turtle()
+food.shape("square")
+food.color("yellow")
+food.shapesize(food_size / 20)
+food.penup()
  
-wn.mainloop()
+ 
+screen.listen()
+screen.onkey(go_up, "Up")
+screen.onkey(go_right, "Right")
+screen.onkey(go_down, "Down")
+screen.onkey(go_left, "Left")
+ 
+ 
+reset()
+turtle.done()
