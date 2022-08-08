@@ -1,3 +1,5 @@
+from tkinter import LEFT
+from turtle import left
 import unittest
 from io import StringIO
 import Snake
@@ -15,7 +17,9 @@ class MyTestCase(unittest.TestCase):
 
 
 class MyTestCase(unittest.TestCase):
-    def test_update(self):
+    def test_direction(self):
+        LEFT = left
+        self.assertEqual(2,)
         
 
 
